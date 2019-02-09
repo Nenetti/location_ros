@@ -66,6 +66,7 @@ class Register:
         ####################################################################################################
         def save(message):
             # type: (String) -> None
+            print("[SAVE]")
             path = message.data
             if path == "":
                 path = DEFAULT_PATH
@@ -77,11 +78,11 @@ class Register:
                             location.pose.orientation.x,
                             location.pose.orientation.y, location.pose.orientation.z, location.pose.orientation.w]
                     writer.writerow(line)
-                    print(line)
 
         ####################################################################################################
         def load(message):
             # type: (String) -> None
+            print("[LOAD]")
             path = message.data
             if path == "":
                 path = DEFAULT_PATH
@@ -117,9 +118,10 @@ class Register:
         ####################################################################################################
         def request_location(request):
             # type: (Request_LocationRequest) -> Request_LocationResponse
+            print(request.name)
             result = locations.get(request.name)
             if result is not None:
-                return Request_LocationResponse(result)
+                return Request_LocationResponse(result.location)
             return None
 
         ####################################################################################################
@@ -131,6 +133,7 @@ class Register:
         rospy.Subscriber("location/register/delete", String, delete)
         rospy.Service("location/request", Request_Location, request_location)
         pub = rospy.Publisher("location/marker", Marker, queue_size=10)
+        rospy.Rate(100).sleep()
         rospy.spin()
 
 
